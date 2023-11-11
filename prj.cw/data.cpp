@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -90,31 +92,17 @@ std::vector<PolarDataPoint> generateVectorsWithNoise(int numVectors, const Coord
     return data;
 }
 
-void writeToFile(const std::vector<PolarDataPoint>& data, const std::string& filename) {
-    std::ofstream file(filename);
-
-    if (file.is_open()) {
-        // Установка точности вывода до двух знаков после запятой
-        file << std::fixed << std::setprecision(2);
-
-        for (const auto& point : data) {
-            file << point.radius << " " << point.angle << std::endl;
-        }
-
-        file.close();
-    } else {
-        std::cerr << "Unable to open file: " << filename << std::endl;
-    }
-}
-
 std::vector<PolarDataPoint> generateDataWithNoise(int numObjects, VisualizationType visType, const CoordinateLimits& limits, double noiseLevel) {
     if (visType == POINTS) {
         return generatePointsWithNoise(numObjects, limits, noiseLevel);
-    } else if (visType == ARCS) {
+    }
+    else if (visType == ARCS) {
         return generateArcsWithNoise(numObjects, limits, noiseLevel);
-    } else if (visType == VECTORS) {
+    }
+    else if (visType == VECTORS) {
         return generateVectorsWithNoise(numObjects, limits, noiseLevel);
-    } else {
+    }
+    else {
         std::cerr << "Invalid visualization type" << std::endl;
         return {};
     }
@@ -124,6 +112,84 @@ bool isNumber(const std::string& str) {
     std::istringstream iss(str);
     double dummy;
     return static_cast<bool>(iss >> dummy);
+}
+
+
+void writeToFile(const std::vector<PolarDataPoint>& data, const std::string& filename) {
+    std::ofstream file(filename);
+
+    if (file.is_open()) {
+        // Установка точности вывода до двух знаков после запятой
+        file << std::fixed << std::setprecision(2);
+
+        for (size_t i = 0; i < data.size(); i += 2) {
+            // Запись начала дуги (или вектора)
+            file << data[i].radius << " " << data[i].angle << " ";
+
+            // Запись конца дуги (или вектора)
+            file << data[i + 1].radius << " " << data[i + 1].angle << std::endl;
+        }
+
+        file.close();
+    }
+    else {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+    }
+}
+
+std::vector<PolarDataPoint> readDataFromFile(const std::string& filename) {
+    std::vector<PolarDataPoint> data;
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return data;
+    }
+
+    double radius, angle;
+    while (file >> radius >> angle) {
+        data.push_back({radius, angle});
+    }
+
+    file.close();
+    return data;
+}
+
+void writePointsToFile(const std::vector<PolarDataPoint>& data, const std::string& filename) {
+    std::ofstream file(filename);
+
+    if (file.is_open()) {
+        // Установка точности вывода до двух знаков после запятой
+        file << std::fixed << std::setprecision(2);
+
+        for (const auto& point : data) {
+            // Запись координаты точки
+            file << point.radius << " " << point.angle << std::endl;
+        }
+
+        file.close();
+    }
+    else {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+    }
+}
+
+std::vector<PolarDataPoint> readPointsFromFile(const std::string& filename) {
+    std::vector<PolarDataPoint> data;
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return data;
+    }
+
+    double radius, angle;
+    while (file >> radius >> angle) {
+        data.push_back({radius, angle});
+    }
+
+    file.close();
+    return data;
 }
 
 int main(int argc, char* argv[]) {
@@ -172,7 +238,11 @@ int main(int argc, char* argv[]) {
     std::string typeName = getTypeName(visType);
     std::vector<PolarDataPoint> dataWithNoise = generateDataWithNoise(numObjects, visType, limits, noiseLevel);
 
-    writeToFile(dataWithNoise, typeName + "_data.txt");
+    if (visType == POINTS) {
+        writePointsToFile(dataWithNoise, typeName + "_data.txt");
+    } else if (visType == ARCS || visType == VECTORS) {
+        writeToFile(dataWithNoise, typeName + "_data.txt");
+    }
 
     return 0;
 }

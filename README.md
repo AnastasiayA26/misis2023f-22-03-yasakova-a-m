@@ -12,4 +12,4 @@
 
 •	Написание консольного приложения
 
-https://github.com/veilanexyz/denviz
+ССылка на хранилище: https://github.com/veilanexyz/denviz

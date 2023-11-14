@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/veilanexyz/pictures/blob/main/sphere.jpg" width="300" height="200">
+  <img src="https://github.com/veilanexyz/pictures/blob/main/sphere.jpg" width="400" height="300">
 </p>
 
 

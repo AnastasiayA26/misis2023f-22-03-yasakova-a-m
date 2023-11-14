@@ -2,11 +2,10 @@
 
 •	Генерация данных в виде точек, отрезков
 
-<img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/points.jpg" width="400" height="400">
 
 •	Отрисовка данных(точек и отрезков)
 
-
+<img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/points.jpg" width="400" height="300">
 •	Написание консольного приложения
 
 ССылка на хранилище: https://github.com/veilanexyz/denviz

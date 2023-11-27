@@ -6,3 +6,8 @@ add_executable(1886a 1886a.cpp)
 add_executable(1669d 1669d.cpp)
 add_executable(1690d 1690d.cpp)
 add_executable(1744d 1744d.cpp)
+add_executable(1220a 1220a.cpp)
+add_executable(1772c 1772c.cpp)
+add_executable(1901a 1901a.cpp)
+add_executable(0256a 0256a.cpp)
+

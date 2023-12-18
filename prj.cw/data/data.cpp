@@ -4,173 +4,143 @@
 #include <fstream>
 #include <iomanip>
 
-Data::Data() : distribution(0.0, 1.0), lengthDistribution(0.0, 5.0) {
-}
+SphericalCoordinatesGenerator::SphericalCoordinatesGenerator() {}
 
-void Data::writeSegmentsToFile(const std::vector<Point>& coordinates, const std::string& filename) {
+void SphericalCoordinatesGenerator::writePointsToFile(const std::string& filename, const std::vector<std::vector<double>>& points) const {
     std::ofstream outFile(filename);
+
     if (!outFile.is_open()) {
         std::cerr << "Unable to open file: " << filename << std::endl;
         return;
     }
 
-    outFile << std::fixed << std::setprecision(2);
-
-    for (size_t i = 0; i < coordinates.size(); i += 2) {
-        outFile << coordinates[i].x << " " << coordinates[i].y << " ";
-        outFile << coordinates[i + 1].x << " " << coordinates[i + 1].y << std::endl;
+    for (const auto& point : points) {
+        for (const auto& coord : point) {
+            outFile << coord << " ";
+        }
+        outFile << std::endl;
     }
 
     outFile.close();
 }
 
-void Data::writePointsToFile(const std::vector<Point>& coordinates, const std::string& filename) {
-    std::ofstream outFile(filename);
-    if (!outFile.is_open()) {
+std::vector<std::vector<double>> SphericalCoordinatesGenerator::readPointsFromFile(const std::string& filename) const {
+    std::ifstream inFile(filename);
+    std::vector<std::vector<double>> points;
+
+    if (!inFile.is_open()) {
         std::cerr << "Unable to open file: " << filename << std::endl;
-        return;
+        return points;
     }
 
-    outFile << std::fixed << std::setprecision(2);
+    double value;
+    while (inFile >> value) {
+        std::vector<double> point;
+        point.push_back(value);
 
-    for (const auto& point : coordinates) {
-        outFile << point.x << ' ' << point.y << '\n';
+        if (inFile >> value) {
+            point.push_back(value);
+            points.push_back(point);
+        } else {
+            std::cerr << "Error reading points from file." << std::endl;
+            inFile.close();
+            return points;
+        }
     }
-    outFile.close();
+
+    inFile.close();
+    return points;
 }
 
-// из одной точки рисуется несколько
-void Data::generateSegmentsFromPoint(int numSegments, double noiseStd, const Point& start, const Point& end) {
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, noiseStd);
+std::vector<std::vector<double>> SphericalCoordinatesGenerator::generatePointsOnArc(int numPoints, double phi_start, double theta_start, double phi_end, double theta_end) const {
+    std::vector<std::vector<double>> points;
 
-    std::vector<Point> segments;
-
-    for (int i = 0; i < numSegments; ++i) {
-        int segmentLength = distribution(generator) + 10;
-
-        double deltaX = (end.x - start.x) / (segmentLength - 1);
-        double deltaY = (end.y - start.y) / (segmentLength - 1);
-
-        Point segmentStart = start;
-        Point segmentEnd;
-
-        segmentEnd.x = start.x + (segmentLength - 1) * deltaX + distribution(generator);;
-        segmentEnd.y = start.y + (segmentLength - 1) * deltaY + distribution(generator);
-        segments.push_back(segmentStart);
-        segments.push_back(segmentEnd);
+    if (phi_start < 0 || phi_start >= 2 * M_PI || theta_start < 0 || theta_start > M_PI ||
+        phi_end < 0 || phi_end >= 2 * M_PI || theta_end < 0 || theta_end > M_PI) {
+        std::cerr << "Invalid input: phi and theta should be in the range [0, 2 * PI] and [0, PI] respectively." << std::endl;
+        return points;
     }
-    writeSegmentsToFile(segments, "segment_from_point.txt");
-}
-
-void Data::generateSegments(int numPoints, double noiseStd, const Point& start, const Point& end) {
-    std::vector<Point> noisyPoints;
-    double deltaX = (end.x - start.x) / (numPoints - 1);
-    double deltaY = (end.y - start.y) / (numPoints - 1);
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::normal_distribution<double> distribution(0.0, noiseStd);
-//    Point p;
-//    noisyPoints.push_back(p);
-    for (int j = 0; j < numPoints; ++j) {
-        Point p;
-        p.x = start.x + j * deltaX;
-        p.y = start.y + j * deltaY;
-        noisyPoints.push_back(p);
-        p.x = start.x + j * deltaX + distribution(gen);
-        p.y = start.y + j * deltaY + distribution(gen);
-        noisyPoints.push_back(p);
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+
+    for (int i = 0; i < numPoints; ++i) {
+        double t = dis(gen); // параметр времени
+        double phi = phi_start + t * (phi_end - phi_start);
+        double theta = theta_start + t * (theta_end - theta_start);
+
+        phi = fmod(phi + 2 * M_PI, 2 * M_PI);
+        theta = std::max(0.0, std::min(M_PI, theta));
+
+        points.push_back({theta, phi});
     }
-    writeSegmentsToFile(noisyPoints, "segments.txt");
+
+    return points;
 }
 
-// из одной точки но с разной длиной
-void Data::generateSegmentsWithDidLen(int numSegments, double noiseStd, const Point& start, const Point& end, double minLength, double maxLength) {
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, noiseStd);
-    std::uniform_real_distribution<double> lengthDistribution(minLength, maxLength);
+std::vector<std::vector<double>> SphericalCoordinatesGenerator::addCoordinateNoiseOnSphere(const std::vector<std::vector<double>>& points, double noiseLevel) const {
+    std::vector<std::vector<double>> noisyPoints;
 
-    std::vector<Point> segments;
-
-    double mainSegmentLength = std::hypot(end.x - start.x, end.y - start.y) / 3;
-    double angle = M_PI / 3.0;  // Угол поворота 60
-
-
-    for (int j = 0; j < numSegments; ++j) {
-        Point nestedSegmentStart;
-        nestedSegmentStart.x = start.x + j * (mainSegmentLength / numSegments) * cos(angle);
-        nestedSegmentStart.y = start.y + j * (mainSegmentLength / numSegments) * sin(angle);
-
-        Point nestedSegmentEnd;
-        double randomLength = lengthDistribution(generator);
-        nestedSegmentEnd.x = nestedSegmentStart.x + randomLength * cos(angle) + distribution(generator);
-        nestedSegmentEnd.y = nestedSegmentStart.y + randomLength * sin(angle) + distribution(generator);
-
-        segments.push_back(nestedSegmentStart);
-        segments.push_back(nestedSegmentEnd);
+    if (noiseLevel < 0) {
+        std::cerr << "Invalid input: noiseLevel should be non-negative." << std::endl;
+        return noisyPoints;
     }
 
-    writeSegmentsToFile(segments, "segments_from_point_with_dif_len.txt");
-}
-void Data::generateRepeatSegments(int numSegments, double noiseStd, const Point& start, const Point& end) {
-    std::default_random_engine generator;
-    std::normal_distribution<double> distribution(0.0, noiseStd);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<> dis(0.0, noiseLevel);
 
-    std::vector<Point> resultPoints;
-    for (int i = 0; i < numSegments; ++i) {
-        Point noisyStart;
-        noisyStart.x = start.x + distribution(generator);
-        noisyStart.y = start.y + distribution(generator);
+    for (const auto& point : points) {
+        double theta = point[0];
+        double phi = point[1];
 
-        Point noisyEnd;
-        noisyEnd.x = end.x + distribution(generator);
-        noisyEnd.y = end.y + distribution(generator);
+        double deltaTheta = dis(gen);
+        double deltaPhi = dis(gen);
 
-        resultPoints.push_back(noisyStart);
-        resultPoints.push_back(noisyEnd);
+        theta += deltaTheta;
+        phi += deltaPhi;
+
+        phi = fmod(phi + 2 * M_PI, 2 * M_PI);
+        theta = std::max(0.0, std::min(M_PI, theta));
+
+        noisyPoints.push_back({theta, phi});
     }
 
-    writeSegmentsToFile(resultPoints, "repeat_segments.txt");
+    return noisyPoints;
 }
 
+std::vector<std::vector<double>> SphericalCoordinatesGenerator::generatePointsFromCenter(int numArcs, int numPointsPerArc, double centerPhi, double centerTheta, double phi_start, double theta_start, double phi_end, double theta_end) const {
+    std::vector<std::vector<double>> points;
 
-std::vector<Data::SegmentsCoordinates> Data::readPointsFromFile(const char* filename) {
-    std::vector<SegmentsCoordinates> coordinates;
-    double x, y;
-
-    std::ifstream inputFile(filename);
-
-    if (!inputFile.is_open()) {
-        std::cerr << "Ошибка при открытии файла." << std::endl;
-        return coordinates;
+    if (phi_start < 0 || phi_start >= 2 * M_PI || theta_start < 0 || theta_start > M_PI ||
+        phi_end < 0 || phi_end >= 2 * M_PI || theta_end < 0 || theta_end > M_PI) {
+        std::cerr << "Invalid input: phi and theta should be in the range [0, 2 * PI] and [0, PI] respectively." << std::endl;
+        return points;
     }
 
-    while (inputFile >> x >> y) {
-        SegmentsCoordinates coord{ x, y };
-        coordinates.push_back(coord);
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+
+    for (int arc = 0; arc < numArcs; ++arc) {
+        std::vector<std::vector<double>> arcPoints;
+
+        for (int i = 0; i < numPointsPerArc; ++i) {
+            double t_phi = dis(gen);   // параметр времени для azimuthal угла
+            double t_theta = dis(gen); // параметр времени для polar угла
+
+            double phi = centerPhi + phi_start + t_phi * (phi_end - phi_start);
+            double theta = centerTheta + theta_start + t_theta * (theta_end - theta_start);
+
+            phi = fmod(phi + 2 * M_PI, 2 * M_PI);
+            theta = std::max(0.0, std::min(M_PI, theta));
+
+            arcPoints.push_back({theta, phi});
+        }
+
+        points.insert(points.end(), arcPoints.begin(), arcPoints.end());
     }
 
-    inputFile.close();
-    return coordinates;
-}
-
-std::vector<Data::SegmentsCoordinates> Data::readSegmentsFromFile(const char* filename) {
-    std::vector<SegmentsCoordinates> vectors;
-    double x, y, z, w;
-
-    std::ifstream inputFile(filename);
-
-    if (!inputFile.is_open()) {
-        std::cerr << "Ошибка при открытии файла." << std::endl;
-        return vectors;
-    }
-
-    while (inputFile >> x >> y >> z >> w) {
-        SegmentsCoordinates coordinates{ x, y, z, w };
-        vectors.push_back(coordinates);
-    }
-
-    inputFile.close();
-    return vectors;
+    return points;
 }

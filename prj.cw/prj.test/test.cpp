@@ -3,61 +3,68 @@
 
 int main(int argc, char* argv[]) {
     if (argc < 8) {
-        std::cerr << "Usage: " << argv[0] << " <type> <numPoints> <blurCoefficient> <startX> <startY> <endX> <endY>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << "<type> <numPoints> <blurCoefficient> <phi_1> <theta_1> <phi_2> <theta_2> [phi_3 theta_3 phi_4/numArcs theta_4]" << std::endl;
         return 1;
     }
-
-    Data data;
 
     std::string type = argv[1];
     int numPoints = std::stoi(argv[2]);
     double blurCoefficient = std::stod(argv[3]);
-    double startX = std::stod(argv[4]);
-    double startY = std::stod(argv[5]);
-    double endX = std::stod(argv[6]);
-    double endY = std::stod(argv[7]);
+    double phi_1 = std::stod(argv[4]);
+    double theta_1 = std::stod(argv[5]);
+    double phi_2 = std::stod(argv[6]);
+    double theta_2 = std::stod(argv[7]);
 
-    Data::Point startPoint{ startX, startY };
-    Data::Point endPoint{ endX, endY };
+    std::string filename;
+    std::string filename1;
 
-
-    if (type == "segment_from_point") {
-       data.generateSegmentsFromPoint(numPoints, blurCoefficient, startPoint, endPoint);
-//        std::vector<Data::SegmentsCoordinates> readVectors = data.readSegmentsFromFile("noisy_segments_from_point.txt");
-//        for (const auto& coordinates : readVectors) {
-//            std::cout << "x: " << coordinates.x << ", y: " << coordinates.y
-//                      << ", x1: " << coordinates.x1 << ", y1: " << coordinates.y1 << std::endl;
+    SphericalCoordinatesGenerator generator;
+   if (type == "one_arc") {
+        filename = "one_noisy_arc_coordinates.txt";
+        std::vector<std::vector<double>> points = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
+        std::vector<std::vector<double>> noisyPoints = generator.addCoordinateNoiseOnSphere(points, blurCoefficient);
+        generator.writePointsToFile(filename, noisyPoints);
+    }
+//   else if(type == "from_point"){
+//        if(argc < 11){
+//            std::cerr << "Usage for type from_point: " << argv[0] << "<type> <numPoints> <blurCoefficient> <phi_1> <theta_1> <phi_2> <theta_2> <phi_3> <theta_3> numArcs" << std::endl;
+//            return 1;
 //        }
-    }
-
-    else if (type == "segments") {
-        data.generateSegments(numPoints, blurCoefficient, startPoint, endPoint);
-                std::vector<Data::SegmentsCoordinates> readVectors = data.readSegmentsFromFile("segments.txt");
-        for (const auto& coordinates : readVectors) {
-            std::cout << "x: " << coordinates.x << ", y: " << coordinates.y
-                      << ", x1: " << coordinates.x1 << ", y1: " << coordinates.y1 << std::endl;
-        }
-
-    }
-
-    else if (type == "repeat_segments") {
-        data.generateRepeatSegments(numPoints, blurCoefficient, startPoint, endPoint);
-    }
-
-    else if (type == "segment_with_dif_len") {
-        if (argc < 10) {
-            std::cerr << "Usage for segments_from_point: " << argv[0] << " <type> <numPoints> <blurCoefficient> <startX> <startY> <endX> <endY> <minLength> <maxLength>" << std::endl;
+//        filename = "noisy_arcs_from_point.txt";
+//        double phi_3 = std::stod(argv[8]);
+//        double theta_3 = std::stod(argv[9]);
+//        double numArcs = std::stod(argv[10]);
+//        std::vector<std::vector<double>> points = generator.generatePointsFromCenter(numArcs, numPoints, phi_1, theta_1, phi_2, theta_2, phi_3, theta_3);
+//        std::vector<std::vector<double>> noisyPoints = generator.addCoordinateNoiseOnSphere(points, blurCoefficient);
+//        generator.writePointsToFile(filename, noisyPoints);
+//    }
+   else if (type == "two_arcs") {
+        if (argc < 12) {
+            std::cerr << "Usage for type two_arcs: " << argv[0] << " <type> <numPoints> <blurCoefficient> <phi_1> <theta_1> <phi_2> <theta_2> <phi_3> <theta_3> <phi_4> <theta_4>" << std::endl;
             return 1;
         }
-        double minLength = std::stod(argv[8]);
-        double maxLength = std::stod(argv[9]);
-        data.generateSegmentsWithDidLen(numPoints, blurCoefficient, startPoint, endPoint, minLength, maxLength);
-    }
+        filename = "first_noisy_arc_coordinates.txt";
+        std::vector<std::vector<double>> points1 = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
+        std::vector<std::vector<double>> noisyPoints1 = generator.addCoordinateNoiseOnSphere(points1, blurCoefficient);
+        generator.writePointsToFile(filename, noisyPoints1);
 
-    else {
-        std::cerr << "Invalid generation type: " << type << std::endl;
+
+        filename1 = "second_noisy_arc_coordinates.txt";
+        double phi_3 = std::stod(argv[8]);
+        double theta_3 = std::stod(argv[9]);
+        double phi_4 = std::stod(argv[10]);
+        double theta_4 = std::stod(argv[11]);
+        std::vector<std::vector<double>> points2 = generator.generatePointsOnArc(numPoints, phi_3, theta_3, phi_4, theta_4);
+        std::vector<std::vector<double>> noisyPoints2 = generator.addCoordinateNoiseOnSphere(points2, blurCoefficient);
+        generator.writePointsToFile(filename1, noisyPoints2);
+   }
+   else {
+        std::cerr << "Invalid type. Supported types" << std::endl;
         return 1;
-    }
-    return 0;
+   }
+    // Output the read data
+    //std::vector<std::vector<double>> readPoints = generator.readPointsFromFile(filename);
+    // return 0;
 }
+
 

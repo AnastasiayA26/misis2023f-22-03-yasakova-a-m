@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/veilanexyz/pictures/blob/main/sphere.jpg" width="300" height="200">
-</p>
+  <img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/4.png" width="400" height="300">
+</p> 
 
 
 ССылка на хранилище: https://github.com/veilanexyz/denviz

@@ -24,7 +24,7 @@ two_arcs 3000 blurCoefficicent 3.1 3.1 1.9 1.9 3.2 2.2 1.78 0.2
 
 
 <p align="center">
-  <img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/11.png" width="600" height="350">
+  <img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/11.png" width="600" height="300">
 
 
 

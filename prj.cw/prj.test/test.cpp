@@ -22,8 +22,8 @@ int main(int argc, char* argv[]) {
     SphericalCoordinatesGenerator generator;
    if (type == "one_arc") {
         filename = "one_noisy_arc_coordinates.txt";
-        std::vector<std::vector<double>> points = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
-        std::vector<std::vector<double>> noisyPoints = generator.addCoordinateNoiseOnSphere(points, blurCoefficient);
+        std::vector<Point> points = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
+        std::vector<Point> noisyPoints = generator.addCoordinateNoiseOnSphere(points, blurCoefficient);
         generator.writePointsToFile(filename, noisyPoints);
     }
 //   else if(type == "from_point"){
@@ -45,8 +45,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         filename = "first_noisy_arc_coordinates.txt";
-        std::vector<std::vector<double>> points1 = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
-        std::vector<std::vector<double>> noisyPoints1 = generator.addCoordinateNoiseOnSphere(points1, blurCoefficient);
+        std::vector<Point> points1 = generator.generatePointsOnArc(numPoints, phi_1, theta_1, phi_2, theta_2);
+        std::vector<Point> noisyPoints1 = generator.addCoordinateNoiseOnSphere(points1, blurCoefficient);
         generator.writePointsToFile(filename, noisyPoints1);
 
 
@@ -55,8 +55,8 @@ int main(int argc, char* argv[]) {
         double theta_3 = std::stod(argv[9]);
         double phi_4 = std::stod(argv[10]);
         double theta_4 = std::stod(argv[11]);
-        std::vector<std::vector<double>> points2 = generator.generatePointsOnArc(numPoints, phi_3, theta_3, phi_4, theta_4);
-        std::vector<std::vector<double>> noisyPoints2 = generator.addCoordinateNoiseOnSphere(points2, blurCoefficient);
+        std::vector<Point> points2 = generator.generatePointsOnArc(numPoints, phi_3, theta_3, phi_4, theta_4);
+        std::vector<Point> noisyPoints2 = generator.addCoordinateNoiseOnSphere(points2, blurCoefficient);
         generator.writePointsToFile(filename1, noisyPoints2);
    }
    else {
@@ -67,5 +67,4 @@ int main(int argc, char* argv[]) {
     //std::vector<std::vector<double>> readPoints = generator.readPointsFromFile(filename);
     // return 0;
 }
-
 

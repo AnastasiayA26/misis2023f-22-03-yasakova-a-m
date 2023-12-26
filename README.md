@@ -8,7 +8,7 @@ two_arcs 10000  bluerCoefficicent 0.1 0.001 3.0 2.0 1.0 1.2 3.0 0.2
 </p>
 
 <p align="center">
-  <img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/10.png" width="600" height="600">
+  <img src="https://github.com/AnastasiayA26/1-year-univercity-c-/blob/main/10.png" width="600" height="400">
 
   <br>
   

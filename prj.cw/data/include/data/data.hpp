@@ -90,6 +90,4 @@ public:
 #endif // DATA_HPP
 
 
-#endif // DATA_HPP
-
 

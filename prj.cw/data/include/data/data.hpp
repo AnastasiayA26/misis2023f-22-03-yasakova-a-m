@@ -29,11 +29,6 @@ struct Point {
 class SphericalCoordinatesGenerator {
 public:
     /**
-     * @brief Default constructor.
-     */
-    SphericalCoordinatesGenerator();
-
-    /**
      * @brief Writes points to a file.
      *
      * @param filename File name to write the points.

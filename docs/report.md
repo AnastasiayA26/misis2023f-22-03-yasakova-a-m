@@ -59,7 +59,6 @@
 В языке C++, переменные окружения могут быть использованы с помощью стандартной библиотеки `<cstdlib>`.
 
    <pre>
-```cpp
 #include <cstdlib>
 #include <iostream>
 
@@ -68,13 +67,29 @@ int main()
     if (const char* env_p = std::getenv("PATH"))
         std::cout << "Your PATH is: " << env_p << '\n';
 }
-```
 </pre>
    
    значения переменной окружения `PATH`.
    - Например, можно установить переменную окружения во время выполнения программы.
      
-  ![cpp](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/6.png)
+      <pre>
+#include <cstdlib>
+#include <iostream>
+
+int main() {
+    putenv("MY_VARIABLE=Hello, World!");
+    
+    const char* value = std::getenv("MY_VARIABLE");
+
+    if (value != nullptr) {
+        std::cout << "MY_VARIABLE: " << value << std::endl;
+    } else {
+        std::cout << "MY_VARIABLE not found." << std::endl;
+    }
+
+    return 0;
+}
+</pre>
    
 
 Такой подход позволяет программе адаптироваться к различным средам выполнения, используя переменные окружения для настройки своего поведения.

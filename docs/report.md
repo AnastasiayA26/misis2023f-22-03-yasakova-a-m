@@ -35,16 +35,16 @@
 6) **Управление Зависимостями с CMake:**
    - Определение путей к сторонним библиотекам и зависимостям.
    - *Пример:*
-     ![dependencies](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/4.jpg)
+     ![dependencies](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/4.png)
       Библиотека `visualization` линкуется с библиотекой `data`.
   
 
 7) **Управление Версиями и Стандартами языка:**
    - В процессе сборки проекта можно использовать переменные окружения для управления версиями компиляторов и стандартами языка.
    - *Пример:*
-     ![language_versions](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/5.jpg)
+     ![language_versions](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/5.png)
      
-     ![test](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/6.jpg)
+     ![test](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/6.png)
      Установка переменных окружения в процессе сборки.
 
 8) **Установка переменных окружения в процессе сборки:**
@@ -57,12 +57,12 @@
 
 В языке C++, переменные окружения могут быть использованы с помощью стандартной библиотеки `<cstdlib>`.
 
-   ![p](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/7.jpg)
+   ![p](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/7.png)
    
    значения переменной окружения `PATH`.
    - Например, можно установить переменную окружения во время выполнения программы.
      
-  ![cpp](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/8.jpg)
+  ![cpp](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/8.png)
    
 
 Такой подход позволяет программе адаптироваться к различным средам выполнения, используя переменные окружения для настройки своего поведения.

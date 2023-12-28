@@ -71,25 +71,8 @@ int main()
    
    значения переменной окружения `PATH`.
    - Например, можно установить переменную окружения во время выполнения программы.
-     
-      <pre>
-#include <cstdlib>
-#include <iostream>
+   ![dependencies](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/9.png)
 
-int main() {
-    putenv("MY_VARIABLE=Hello, World!");
-    
-    const char* value = std::getenv("MY_VARIABLE");
-
-    if (value != nullptr) {
-        std::cout << "MY_VARIABLE: " << value << std::endl;
-    } else {
-        std::cout << "MY_VARIABLE not found." << std::endl;
-    }
-
-    return 0;
-}
-</pre>
    
 
 Такой подход позволяет программе адаптироваться к различным средам выполнения, используя переменные окружения для настройки своего поведения.

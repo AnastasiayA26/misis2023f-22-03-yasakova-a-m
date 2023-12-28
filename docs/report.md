@@ -43,7 +43,8 @@
    - В процессе сборки проекта можно использовать переменные окружения для управления версиями компиляторов и стандартами языка.
    - *Пример:*
      ![language_versions](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/5.jpg)
-     ![language_versions](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/6.jpg)
+     
+     ![test](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/6.jpg)
      Установка переменных окружения в процессе сборки.
 
 8) **Установка переменных окружения в процессе сборки:**
@@ -55,10 +56,13 @@
 ## Использование окружения-переменных в C++:
 
 В языке C++, переменные окружения могут быть использованы с помощью стандартной библиотеки `<cstdlib>`.
-   ![cpp_env_usage](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/7.jpg)
+
+   ![p](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/7.jpg)
+   
    значения переменной окружения `PATH`.
    - Например, можно установить переменную окружения во время выполнения программы.
-  ![cpp_env_usage](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/8.jpg)
+     
+  ![cpp](https://github.com/AnastasiayA26/misis2023f-22-03-yasakova-a-m/blob/main/docs/8.jpg)
    
 
 Такой подход позволяет программе адаптироваться к различным средам выполнения, используя переменные окружения для настройки своего поведения.
